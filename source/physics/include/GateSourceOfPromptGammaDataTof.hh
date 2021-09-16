@@ -9,16 +9,16 @@
   ----------------------*/
 
 /*!
-  \class  GateSourceOfPromptGammaData
+  \class  GateSourceOfPromptGammaDataTof
 
-  Manage a 3D distribution of prompt gamma, with 1 energy spectrum at
+  Manage a 3D distribution of prompt gamma, with 1 time spectrum at
   each voxel, stored as TH1D. For voxels with yield==0, the TH1D is not
   instantiated/allocated.
 
 */
 
-#ifndef GATEPROMPTGAMMASPATIALEMISSIONDISTRIBUTION_HH
-#define GATEPROMPTGAMMASPATIALEMISSIONDISTRIBUTION_HH
+#ifndef GATEPROMPTGAMMASPATIALEMISSIONDISTRIBUTIONTOF_HH
+#define GATEPROMPTGAMMASPATIALEMISSIONDISTRIBUTIONTOF_HH
 
 #include "G4UnitsTable.hh"
 #include "G4ParticleMomentum.hh"
@@ -32,26 +32,23 @@
 #include <fstream>
 
 //------------------------------------------------------------------------
-class GateSourceOfPromptGammaData
+class GateSourceOfPromptGammaDataTof
 {
 public:
-  GateSourceOfPromptGammaData();
-  ~GateSourceOfPromptGammaData();
+  GateSourceOfPromptGammaDataTof();
+  ~GateSourceOfPromptGammaDataTof();
 
-  //void SampleRandomPositionTime(G4ThreeVector & position, G4double & tof);
-  void SampleRandomPosition(G4ThreeVector & position);
-  void SampleRandomEnergy(double & energy);
-  void SampleRandomDirection(G4ParticleMomentum & direction);
+  void SampleRandomPositionToF(G4ThreeVector & position);
+  double SampleRandomTime(double & time);
 
-  void LoadData(std::string mFilename);
-  void Initialize();
-  //void InitializeToF(); /** Modif Oreste **/
-  double computesum;
-  double ComputeSum() { return computesum; }
+  void LoadDataToF(std::string mFilename);
+  void InitializeToF();
+  double computesumtof;
+  double ComputeSumToF() { return computesumtof; }
 
 protected:
   // The 3D prompt gamma distribution
-  GateImageOfHistograms * mImage;
+  GateImageOfHistograms * mImageTof; /** Modif Oreste **/
   std::vector<float> mDataCounts;
 
   //double * mean = new double[104125];
@@ -70,14 +67,11 @@ protected:
   std::vector<double> mIndexCoordX;
   std::vector<double> mIndexCoordY;
   std::vector<double> mIndexCoordZ;
+  std::vector<TH1D*> mTimeGen; /** Modif Oreste **/
 
-  // The angular, position and energy generator
-  G4SPSAngDistribution mAngleGen;
-  //  std::vector<G4SPSEneDistribution> mEnergyGen;
-  std::vector<TH1D*> mEnergyGen;
-  G4SPSRandomGenerator mPositionXGen;
-  std::vector<G4SPSRandomGenerator*> mPositionYGen;
-  std::vector<std::vector<G4SPSRandomGenerator*> > mPositionZGen;
+  G4SPSRandomGenerator mPositionXGenToF;
+  std::vector<G4SPSRandomGenerator*> mPositionYGenToF;
+  std::vector<std::vector<G4SPSRandomGenerator*> > mPositionZGenToF;
 
 }; // end class
 //------------------------------------------------------------------------

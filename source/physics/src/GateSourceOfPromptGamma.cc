@@ -14,6 +14,11 @@
 #include "GateApplicationMgr.hh"
 #include "GateSourceMgr.hh"
 
+#include "GateSourceOfPromptGammaData.hh"
+#include "GateSourceOfPromptGammaDataTof.hh"
+#include "GateImageOfHistograms.hh"
+#include <iostream>
+#include <fstream>
 #include "G4ParticleTable.hh"
 #include "G4Event.hh"
 #include "G4Gamma.hh"
@@ -25,6 +30,7 @@ GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   pMessenger = new GateSourceOfPromptGammaMessenger(this);
   // Create data object (will be initialized later)
   mData = new GateSourceOfPromptGammaData;
+  mDataToF = new GateSourceOfPromptGammaDataTof;
   mIsInitializedFlag = false;
   mIsInitializedNumberOfPrimariesFlag = false;
   mFilename = "no filename given";
@@ -68,12 +74,17 @@ void GateSourceOfPromptGamma::Initialize()
   // into number of gamma primaries. See GateApplicationMgrMessenger.cc
   // WILL NOT WORK WITH SEVERAL SOURCES !
   SetSourceWeight(mData->ComputeSum());
+  /** Modif Oreste **/
+  // Get and load file contianing the pTime data
+  mDataToF->LoadDataToF(mFilename);
+  mDataToF->InitializeToF();
+
+  /**              **/
 
   // It is initialized
   mIsInitializedFlag = true;
 }
 //------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------
 void GateSourceOfPromptGamma::InitializeNumberOfPrimaries()
@@ -120,6 +131,9 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4ThreeVector particle_position;
   mData->SampleRandomPosition(particle_position);
 
+  G4ThreeVector particle_position_tof;
+  mDataToF->SampleRandomPositionToF(particle_position_tof);
+
   // The position coordinate is expressed in the coordinate system
   // (CS) of the volume it was attached to during the TLEActor
   // simulation. Now we convert the coordinates into world
@@ -128,6 +142,9 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 
   // Energy
   mData->SampleRandomEnergy(mEnergy);
+
+  // Time
+  mDataToF->SampleRandomTime(mTime);
 
   // Direction
   G4ParticleMomentum particle_direction;
@@ -148,7 +165,7 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4PrimaryParticle* particle =
     new G4PrimaryParticle(G4Gamma::Gamma(), px, py, pz);
   G4PrimaryVertex* vertex;
-  vertex = new G4PrimaryVertex(particle_position, GetParticleTime());
+  vertex = new G4PrimaryVertex(particle_position, particle_time);
   vertex->SetWeight(1.0); // FIXME
   vertex->SetPrimary(particle);
   aEvent->AddPrimaryVertex(vertex);
