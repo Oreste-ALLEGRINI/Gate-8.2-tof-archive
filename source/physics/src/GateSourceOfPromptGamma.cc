@@ -139,13 +139,14 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   // simulation. Now we convert the coordinates into world
   // coordinates.
   ChangeParticlePositionRelativeToAttachedVolume(particle_position);
+  ChangeParticlePositionRelativeToAttachedVolume(particle_position_tof);
 
   // Energy
   mData->SampleRandomEnergy(mEnergy);
 
   // Time
   mDataToF->SampleRandomTime(mTime);
-
+  if (mTime<1.5) std::cout<<mTime<<" "<<mEnergy<<" "<<particle_position_tof.x()<<" "<<particle_position.x()<<" "<<particle_position_tof.y()<<" "<<particle_position.y()<<" "<<particle_position_tof.z()<<" "<<particle_position.z()<<std::endl;
   // Direction
   G4ParticleMomentum particle_direction;
   mData->SampleRandomDirection(particle_direction);
@@ -165,9 +166,10 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4PrimaryParticle* particle =
     new G4PrimaryParticle(G4Gamma::Gamma(), px, py, pz);
   G4PrimaryVertex* vertex;
-  vertex = new G4PrimaryVertex(particle_position, particle_time);
+  vertex = new G4PrimaryVertex(particle_position, mTime);
   vertex->SetWeight(1.0); // FIXME
   vertex->SetPrimary(particle);
+  vertex->SetT0(mTime);
   aEvent->AddPrimaryVertex(vertex);
 }
 //------------------------------------------------------------------------

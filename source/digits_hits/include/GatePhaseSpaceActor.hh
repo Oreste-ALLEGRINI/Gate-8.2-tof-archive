@@ -65,6 +65,7 @@ public:
   void SetIsProdProcessEnabled(bool b){EnableProdProcess = b;}
   void SetIsWeightEnabled(bool b){EnableWeight = b;}
   void SetIsTimeEnabled(bool b){EnableTime = b;}
+  void SetIsIonTimeEnabled(bool b){EnableIonTime = b;}
   void SetIsLocalTimeEnabled(bool b){EnableLocalTime = b;}
   void SetIsMassEnabled(bool b){EnableMass = b;}
   void SetIsSecStored(bool b){EnableSec = b;}
@@ -131,6 +132,7 @@ protected:
   bool EnableProdProcess;
   bool EnableWeight;
   bool EnableTime;
+  bool EnableIonTime;
   bool EnableLocalTime;
   bool EnableMass;
   bool EnableSec;
@@ -192,6 +194,7 @@ protected:
   float tOut;
   float tProd;
   double t;//t is either time or local time.
+  double pt; //Modif Oreste: Used for proton arrival time recovering from mTin in SourceOfPromptGamma
   G4int m;
   Char_t vol[256];
 

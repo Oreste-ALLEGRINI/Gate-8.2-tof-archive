@@ -53,6 +53,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableProdProcess = true;
   EnableWeight = true;
   EnableTime = false;
+  EnableIonTime = true;
   EnableLocalTime = false;
   EnableMass = true;
   EnableSec = false;
@@ -72,7 +73,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mTranslationLength = 0.0;
 
   bEnableCoordFrame = false;
-  bEnablePrimaryEnergy = false;
+  bEnablePrimaryEnergy = true;
   bEnableSpotID = false;
   bEnableCompact = false;
   bEnableEmissionPoint = false;
@@ -152,6 +153,7 @@ void GatePhaseSpaceActor::Construct()
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
     if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/D");
+    if (EnableIonTime) pListeVar->Branch("IonTime", &pt, "Time/D");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
@@ -180,7 +182,7 @@ void GatePhaseSpaceActor::Construct()
     if (EnableTProd) pListeVar->Branch("TProd", &tProd, "TProd/F");
 
     if (EnableNuclearFlag)
-    {    
+    {
       pListeVar->Branch("CreatorProcess", &creator, "CreatorProcess/I");
       pListeVar->Branch("NuclearProcess", &nucprocess, "NuclearProcess/I");
       pListeVar->Branch("Order", &order, "Order/I");
@@ -207,7 +209,7 @@ void GatePhaseSpaceActor::Construct()
     if (EnableYDirection) pIAEARecordType->iv = 1;
     if (EnableZDirection) pIAEARecordType->iw = 1;
     if (EnableWeight) pIAEARecordType->iweight = 1;
-    if (EnableTime || EnableLocalTime) {
+    if (EnableTime || EnableLocalTime || EnableIonTime) {
       GateWarning("'Time' is not available in IAEA phase space.");
     }
     if (EnableMass) {
@@ -237,7 +239,7 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
 {
   // Set Primary Energy
   bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
-
+  pt = e->GetPrimaryVertex()->GetT0();
   // Set SourceID
   if (GetIsSpotIDEnabled()) {
     GateSourceTPSPencilBeam *tpspencilsource =
@@ -377,7 +379,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   // hadElastic = 1
   // protonInelastic = 2
   //===============================================================================================================
- 
+
   if(EnableNuclearFlag)
   {
     GateProtonNuclearInformation * info = dynamic_cast<GateProtonNuclearInformation *>(step->GetTrack()->GetUserInformation());
@@ -387,7 +389,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     {
       creator = 0;
       nucprocess = 0;
-      order = info->GetScatterOrder(); 
+      order = info->GetScatterOrder();
 
       if (!step->GetTrack()->GetCreatorProcess())
         creator = 0;
@@ -445,6 +447,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   tOut = step->GetTrack()->GetLocalTime();
   tProd = step->GetTrack()->GetGlobalTime() - (step->GetTrack()->GetLocalTime());
+
   //------------- Option to project position on a sphere
 
   /* Sometimes it is useful to store the particle position on a different
@@ -502,7 +505,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   if (EnableLocalTime) {
     t = stepPoint->GetLocalTime();
   } else t = stepPoint->GetGlobalTime() ;
-
+  //std::cout<<tOut<<" + "<<tProd<<" = "<<tOut+tProd<<" = "<<t<<" - "<<tOut+tProd-t<<std::endl;
   //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
   GateDebugMessage("Actor", 4, st
                    << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")

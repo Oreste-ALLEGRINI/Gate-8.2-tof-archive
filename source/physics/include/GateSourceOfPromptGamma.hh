@@ -42,7 +42,6 @@ public:
   void GenerateVertex(G4Event* );
   void SetFilename(G4String filename);
 
-
 protected:
   GateSourceOfPromptGammaMessenger * pMessenger;
   bool mIsInitializedFlag;
@@ -52,6 +51,7 @@ protected:
   G4String mFilename;
   double mEnergy; // because particle_energy is private (FIXME will be changed)
   double mTime;
+
 
 
   void Initialize();

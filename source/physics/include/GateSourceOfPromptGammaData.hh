@@ -60,7 +60,6 @@ protected:
 
   //std::vector<float> sigma;
 
-
   // Current pixel index for position in 3D space
   int mCurrentIndex_i;
   int mCurrentIndex_j;

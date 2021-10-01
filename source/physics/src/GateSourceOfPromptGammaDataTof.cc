@@ -169,7 +169,6 @@ double GateSourceOfPromptGammaDataTof::SampleRandomTime(double & time)
     long index = mImageTof->GetIndexFromPixelIndex(mCurrentIndex_i, mCurrentIndex_j, mCurrentIndex_k);
     if (mDataCounts[index] != 0) {
       time = mTimeGen[index]->GetRandom();
-      std::cout<<"Time = "<<time<<std::endl;
     }
     else time = 0.0;
 }

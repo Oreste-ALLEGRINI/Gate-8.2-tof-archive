@@ -225,6 +225,9 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
   // (material is converted from internal units to g/cm3)
   /** Modif Oreste **/
+  if(index==98864){
+  std::cout<<index<<" "<<tof<<" Prelocal : "<<step->GetPreStepPoint()->GetLocalTime()<<" Postlocal : "<<step->GetPostStepPoint()->GetLocalTime()<<" global : "<<step->GetPreStepPoint()->GetGlobalTime()<<" ID : "<<step->GetTrack()->GetTrackID()<<" Parent : "<<step->GetTrack()->GetParentID()<<std::endl;
+  }
   pTime->Fill(tof);
   mImagetof->AddValueDouble(index, pTime, w * distance * material->GetDensity() / (g / cm3));
 }
