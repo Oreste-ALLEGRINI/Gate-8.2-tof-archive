@@ -146,7 +146,8 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 
   // Time
   mDataToF->SampleRandomTime(mTime);
-  if (mTime<1.5) std::cout<<mTime<<" "<<mEnergy<<" "<<particle_position_tof.x()<<" "<<particle_position.x()<<" "<<particle_position_tof.y()<<" "<<particle_position.y()<<" "<<particle_position_tof.z()<<" "<<particle_position.z()<<std::endl;
+  //debug
+  //if (mTime<1.5) std::cout<<mTime<<" "<<mEnergy<<" "<<particle_position_tof.x()<<" "<<particle_position.x()<<" "<<particle_position_tof.y()<<" "<<particle_position.y()<<" "<<particle_position_tof.z()<<" "<<particle_position.z()<<std::endl;
   // Direction
   G4ParticleMomentum particle_direction;
   mData->SampleRandomDirection(particle_direction);

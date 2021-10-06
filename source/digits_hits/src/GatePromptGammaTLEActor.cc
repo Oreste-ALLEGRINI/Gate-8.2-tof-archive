@@ -170,7 +170,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double &distance = step->GetStepLength();
-  const G4double &tof = step->GetPreStepPoint()->GetLocalTime(); /** Modif Oreste **/
+  const G4double &tof = step->GetPostStepPoint()->GetLocalTime();//step->GetTrack()->GetGlobalTime(); /** Modif Oreste **/
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -179,6 +179,9 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   if (particle_energy > data.GetProtonEMax()) {
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
+
+  // Check if proton is secondary emission (Issue in retrieving GetGlobalTime ==> Need to be solved)
+  if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
 
   // Post computation TLE + TLE systematic + random variance (for the uncorrelated case, which is wrong).
   if (mIsDebugOutputEnabled) {
@@ -225,9 +228,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
   // (material is converted from internal units to g/cm3)
   /** Modif Oreste **/
-  if(index==98864){
-  std::cout<<index<<" "<<tof<<" Prelocal : "<<step->GetPreStepPoint()->GetLocalTime()<<" Postlocal : "<<step->GetPostStepPoint()->GetLocalTime()<<" global : "<<step->GetPreStepPoint()->GetGlobalTime()<<" ID : "<<step->GetTrack()->GetTrackID()<<" Parent : "<<step->GetTrack()->GetParentID()<<std::endl;
-  }
+  //debug
+  //if(index==98864){
+  //std::cout<<index<<" "<<tof<<" Prelocal : "<<step->GetPreStepPoint()->GetLocalTime()<<" Postlocal : "<<step->GetPostStepPoint()->GetLocalTime()<<" global : "<<step->GetPreStepPoint()->GetGlobalTime()<<" ID : "<<step->GetTrack()->GetTrackID()<<" Parent : "<<step->GetTrack()->GetParentID()<<"Event ID : "<<mCurrentEvent<<std::endl;
+  //}
   pTime->Fill(tof);
   mImagetof->AddValueDouble(index, pTime, w * distance * material->GetDensity() / (g / cm3));
 }
