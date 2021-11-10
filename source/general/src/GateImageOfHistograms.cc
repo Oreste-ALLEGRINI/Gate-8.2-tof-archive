@@ -46,6 +46,17 @@ void GateImageOfHistograms::SetHistoInfo(int n, double min, double max)
 
 
 //-----------------------------------------------------------------------------
+void GateImageOfHistograms::SetHistoInfo(int n, double min, double max, double val)
+{
+  nbOfBins = n;
+  minValue = min;
+  maxValue = max;
+  binval = val;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void GateImageOfHistograms::Allocate()
 {
   sizeX = resolution.x();
@@ -222,6 +233,13 @@ void GateImageOfHistograms::AddValueDouble(const int & index, const int &bin, co
 {
   long index_data = index*nbOfBins+bin;
   dataDouble[index_data] += value;
+}
+//-----------------------------------------------------------------------------
+
+void GateImageOfHistograms::AddValueDouble(const int & index, const double value, const double scale=1.0) /** Modif Oreste **/
+{
+  long index_data = index*nbOfBins;
+  dataDouble[index_data] += value*scale;
 }
 //-----------------------------------------------------------------------------
 

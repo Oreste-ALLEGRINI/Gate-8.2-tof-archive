@@ -76,7 +76,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bEnablePrimaryEnergy = true;
   bEnableSpotID = false;
   bEnableCompact = false;
-  bEnableEmissionPoint = false;
+  bEnableEmissionPoint = true;
   bEnablePDGCode = false;
   bEnableTOut = true;
   bEnableTProd = true;

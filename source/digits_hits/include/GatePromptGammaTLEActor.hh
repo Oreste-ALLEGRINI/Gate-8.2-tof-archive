@@ -59,7 +59,7 @@ protected:
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
   void SetTLEIoH(GateImageOfHistograms*&);
-  void SetTofIoH(GateImageOfHistograms*&); /** Modif Oreste **/
+  void SetTofIoH(GateImageOfHistograms*&, TH1D*); /** Modif Oreste **/
   GateVImageVolume* GetPhantom();
   void BuildVarianceOutput(); //converts trackl,tracklsq into mImageGamma and tlevar per voxel. Not used.
   //void BuildSysVarianceOutput(); //converts trackl into mImageGamma and tlesysvarv. Not used.
@@ -80,8 +80,9 @@ protected:
 
   GateImageInt mLastHitEventImage;      //store eventID when last updated.
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
+  G4PrimaryParticle * primary_time;
 
-  TH1D * pTime = new TH1D("","",250,0,25); /** Modif Oreste **/
+  TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/
 };
 //-----------------------------------------------------------------------------
 

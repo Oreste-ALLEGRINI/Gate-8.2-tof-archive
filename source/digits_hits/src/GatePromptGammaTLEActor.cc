@@ -64,7 +64,7 @@ void GatePromptGammaTLEActor::Construct()
 
   //set up and allocate runtime images.
   SetTLEIoH(mImageGamma);
-  SetTofIoH(mImagetof); /** Modif Oreste **/
+  SetTofIoH(mImagetof, pTime); /** Modif Oreste **/
   if (mIsDebugOutputEnabled){
     //set up and allocate lasthiteventimage
     SetOriginTransformAndFlagToImage(mLastHitEventImage);
@@ -170,7 +170,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double &distance = step->GetStepLength();
-  const G4double &tof = step->GetPostStepPoint()->GetLocalTime();//step->GetTrack()->GetGlobalTime(); /** Modif Oreste **/
+  const G4double &tof = step->GetPostStepPoint()->GetLocalTime();//step->GetTrack()->GetGlobalTime() / (s); /** Modif Oreste **/
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -229,11 +229,14 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // (material is converted from internal units to g/cm3)
   /** Modif Oreste **/
   //debug
-  //if(index==98864){
+  //if(index==81918){
   //std::cout<<index<<" "<<tof<<" Prelocal : "<<step->GetPreStepPoint()->GetLocalTime()<<" Postlocal : "<<step->GetPostStepPoint()->GetLocalTime()<<" global : "<<step->GetPreStepPoint()->GetGlobalTime()<<" ID : "<<step->GetTrack()->GetTrackID()<<" Parent : "<<step->GetTrack()->GetParentID()<<"Event ID : "<<mCurrentEvent<<std::endl;
   //}
+  //if(mCurrentEvent==2){ std::cout<<index<<"  "<<tof<<std::endl;}
   pTime->Fill(tof);
   mImagetof->AddValueDouble(index, pTime, w * distance * material->GetDensity() / (g / cm3));
+  pTime->Reset();
+
 }
 //-----------------------------------------------------------------------------
 
@@ -369,12 +372,13 @@ void GatePromptGammaTLEActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh) {
+void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
   ioh = new GateImageOfHistograms("double");
+  std::cout<< (h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()<<std::endl;
   ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   ioh->SetOrigin(mOrigin);
   ioh->SetTransformMatrix(mImage.GetTransformMatrix());
-  ioh->SetHistoInfo(250, 0, 25);
+  ioh->SetHistoInfo(h->GetNbinsX(), h->GetXaxis()->GetFirst()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()), h->GetXaxis()->GetLast()*((h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()));
   ioh->Allocate();
   ioh->PrintInfo();
 }

@@ -50,6 +50,8 @@ protected:
   bool alreadyHere;
 
   GateImageOfHistograms * mImageGamma;  //main output (yield)
+  GateImageOfHistograms * mImagetof; /** Modif Oreste **/
+  TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/ //the source can be placed up to around 2.5 m upstream the target => Can be increased or decreased by modifying the TH size
 
 };
 //-----------------------------------------------------------------------------
