@@ -77,7 +77,7 @@ void GatePromptGammaAnalogActor::Construct()
   mImagetof->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mImagetof->SetOrigin(mOrigin);
   mImagetof->SetTransformMatrix(mImage.GetTransformMatrix());
-  mImagetof->SetHistoInfo(pTime->GetNbinsX(), pTime->GetXaxis()->GetFirst(), pTime->GetXaxis()->GetLast());
+  mImagetof->SetHistoInfo(pTime->GetNbinsX(), pTime->GetXaxis()->GetFirst()*((pTime->GetXaxis()->GetXmax()-pTime->GetXaxis()->GetXmin())/pTime->GetNbinsX()), pTime->GetXaxis()->GetLast()*((pTime->GetXaxis()->GetXmax()-pTime->GetXaxis()->GetXmin())/pTime->GetNbinsX()));
   mImagetof->Allocate();
   mImagetof->PrintInfo();
 

@@ -131,21 +131,22 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4ThreeVector particle_position;
   mData->SampleRandomPosition(particle_position);
 
-  G4ThreeVector particle_position_tof;
-  mDataToF->SampleRandomPositionToF(particle_position_tof);
+  //G4ThreeVector particle_position_tof;
+  //mDataToF->SampleRandomPositionToF(particle_position_tof);
 
   // The position coordinate is expressed in the coordinate system
   // (CS) of the volume it was attached to during the TLEActor
   // simulation. Now we convert the coordinates into world
   // coordinates.
   ChangeParticlePositionRelativeToAttachedVolume(particle_position);
-  ChangeParticlePositionRelativeToAttachedVolume(particle_position_tof);
+  //ChangeParticlePositionRelativeToAttachedVolume(particle_position_tof);
 
   // Energy
   mData->SampleRandomEnergy(mEnergy);
 
   // Time
-  mDataToF->SampleRandomTime(mTime);
+  mDataToF->SampleRandomTime(mTime, mData->mCurrentIndex_i, mData->mCurrentIndex_j, mData->mCurrentIndex_k);
+  //std::cout<<"Time in SourceOfPromptGamma : "<<mTime<<std::endl;
   //debug
   //if (mTime<1.5) std::cout<<mTime<<" "<<mEnergy<<" "<<particle_position_tof.x()<<" "<<particle_position.x()<<" "<<particle_position_tof.y()<<" "<<particle_position.y()<<" "<<particle_position_tof.z()<<" "<<particle_position.z()<<std::endl;
   // Direction

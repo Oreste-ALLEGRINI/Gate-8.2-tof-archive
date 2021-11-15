@@ -49,6 +49,11 @@ public:
   double computesum;
   double ComputeSum() { return computesum; }
 
+  // Current pixel index for position in 3D space
+  int mCurrentIndex_i;
+  int mCurrentIndex_j;
+  int mCurrentIndex_k;
+
 protected:
   // The 3D prompt gamma distribution
   GateImageOfHistograms * mImage;
@@ -59,11 +64,6 @@ protected:
   //std::vector<float> mean ;
 
   //std::vector<float> sigma;
-
-  // Current pixel index for position in 3D space
-  int mCurrentIndex_i;
-  int mCurrentIndex_j;
-  int mCurrentIndex_k;
 
   // Physical coordinates from index coordinate
   std::vector<double> mIndexCoordX;

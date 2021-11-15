@@ -79,6 +79,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   bEnableEmissionPoint = true;
   bEnablePDGCode = false;
   bEnableTOut = true;
+  bEnablept = true;
   bEnableTProd = true;
 
   bSpotID = 0;
@@ -152,8 +153,8 @@ void GatePhaseSpaceActor::Construct()
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
-    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/D");
-    if (EnableIonTime) pListeVar->Branch("IonTime", &pt, "Time/D");
+    if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
+    if (EnableIonTime) pListeVar->Branch("IonTime", &pt, "IonTime/F");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
@@ -240,6 +241,7 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
   // Set Primary Energy
   bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
   pt = e->GetPrimaryVertex()->GetT0();
+  //std::cout<<"Temps de GetT0 : "<<pt<<std::endl;
   // Set SourceID
   if (GetIsSpotIDEnabled()) {
     GateSourceTPSPencilBeam *tpspencilsource =

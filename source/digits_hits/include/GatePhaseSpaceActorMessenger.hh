@@ -58,6 +58,7 @@ protected:
   G4UIcmdWithABool* pEnableParticleNameCmd;
   G4UIcmdWithABool* pEnableWeightCmd;
   G4UIcmdWithABool* pEnableTimeCmd;
+  G4UIcmdWithABool* pEnableIonTimeCmd;
   G4UIcmdWithABool* pEnableMassCmd;
   G4UIcmdWithABool* pEnableSecCmd;
   G4UIcmdWithABool* pEnableStoreAllStepCmd;
@@ -79,6 +80,7 @@ protected:
   G4UIcmdWithADoubleAndUnit* bSetTranslationAlongDirectionLength;
 
   G4UIcmdWithABool* pEnableTOutCmd;
+  G4UIcmdWithABool* pEnableptCmd;
   G4UIcmdWithABool* pEnableTProdCmd;
 
 };

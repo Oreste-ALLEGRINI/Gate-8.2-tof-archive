@@ -264,6 +264,9 @@ void GateSourceOfPromptGammaData::SampleRandomEnergy(double & energy)
 
   if (mDataCounts[index] != 0) {
     energy = mEnergyGen[index]->GetRandom();
+    if(index==80273){
+        std::cout<<"Randomenergy :"<<energy<<std::endl;
+    }
   }
   else energy = 0.0;
 }

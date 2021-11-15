@@ -39,7 +39,7 @@ public:
   ~GateSourceOfPromptGammaDataTof();
 
   void SampleRandomPositionToF(G4ThreeVector & position);
-  double SampleRandomTime(double & time);
+  void SampleRandomTime(double & time, int i, int j, int k);
 
   void LoadDataToF(std::string mFilename);
   void InitializeToF();
@@ -59,9 +59,9 @@ protected:
 
 
   // Current pixel index for position in 3D space
-  int mCurrentIndex_i;
-  int mCurrentIndex_j;
-  int mCurrentIndex_k;
+  //int mCurrentIndex_i;
+  //int mCurrentIndex_j;
+  //int mCurrentIndex_k;
 
   // Physical coordinates from index coordinate
   std::vector<double> mIndexCoordX;

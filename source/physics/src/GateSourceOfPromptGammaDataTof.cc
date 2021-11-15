@@ -133,7 +133,7 @@ void GateSourceOfPromptGammaDataTof::InitializeToF()
 
 }
 //------------------------------------------------------------------------
-void GateSourceOfPromptGammaDataTof::SampleRandomPositionToF(G4ThreeVector & position)
+/*void GateSourceOfPromptGammaDataTof::SampleRandomPositionToF(G4ThreeVector & position)
 {
   // Random 3D position (in pixel). If size == 1, then bug in GenRand
   // (infinite loop), so we test and set random value [0:1]
@@ -159,22 +159,25 @@ void GateSourceOfPromptGammaDataTof::SampleRandomPositionToF(G4ThreeVector & pos
   position.setX(x);
   position.setY(y);
   position.setZ(z);
-}
+}*/
 
 //------------------------------------------------------------------------
 
-double GateSourceOfPromptGammaDataTof::SampleRandomTime(double & time)
+void GateSourceOfPromptGammaDataTof::SampleRandomTime(double & time, int i, int j, int k)
 {
     // Get time spectrum in the current pixel
-    long index = mImageTof->GetIndexFromPixelIndex(mCurrentIndex_i, mCurrentIndex_j, mCurrentIndex_k);
-    if(index==81918){
-      std::cout<<mCurrentIndex_i<<" "<<mCurrentIndex_j<<" "<<mCurrentIndex_i<<std::endl;
-      for(int i=0; i<1000; i++){
-        std::cout<<mTimeGen.at(index)->GetBinContent(i)<<std::endl;
-      }
-    }
+    long index = mImageTof->GetIndexFromPixelIndex(i, j, k);
+    //if(index==80273){
+      //std::cout<<mCurrentIndex_i<<" "<<mCurrentIndex_j<<" "<<mCurrentIndex_i<<std::endl;
+      //for(int i=0; i<1000; i++){
+        //std::cout<<mTimeGen.at(index)->GetBinContent(i)<<std::endl;
+      //}
+    //}
     if (mDataCounts[index] != 0) {
       time = mTimeGen[index]->GetRandom();
+      if(index==80273){
+        std::cout<<"RandomTime :"<<time<<std::endl;
+      }
     }
     else time = 0.0;
 }

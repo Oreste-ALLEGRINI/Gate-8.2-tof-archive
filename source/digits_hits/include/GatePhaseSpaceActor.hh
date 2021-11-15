@@ -165,6 +165,7 @@ protected:
   long int bPDGCode;
 
   bool bEnableTOut;
+  bool bEnablept;
   bool bEnableTProd;
 
   double mFileSize;
@@ -193,8 +194,8 @@ protected:
   float w;
   float tOut;
   float tProd;
-  double t;//t is either time or local time.
-  double pt; //Modif Oreste: Used for proton arrival time recovering from mTin in SourceOfPromptGamma
+  float t;//t is either time or local time.
+  float pt; //Modif Oreste: Used for proton arrival time recovering from mTime in SourceOfPromptGamma
   G4int m;
   Char_t vol[256];
 
