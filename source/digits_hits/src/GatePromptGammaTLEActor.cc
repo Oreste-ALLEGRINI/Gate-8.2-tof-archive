@@ -139,6 +139,7 @@ void GatePromptGammaTLEActor::BeginOfEventAction(const G4Event *e) {
   //std::cout << "Event Begin. Press any key to continue." << std::endl;
   //std::cin.get();
   GateVActor::BeginOfEventAction(e);
+  mCurrentIndex = -1;
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: " << mCurrentEvent << G4endl);
 }
@@ -170,7 +171,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double &distance = step->GetStepLength();
-  const G4double &tof = step->GetPostStepPoint()->GetLocalTime();//step->GetTrack()->GetGlobalTime() / (s); /** Modif Oreste **/
+  randomNumber = G4UniformRand();
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -228,13 +229,38 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
   // (material is converted from internal units to g/cm3)
   /** Modif Oreste **/
+  //std::cout<<index<<" "<<step->GetPreStepPoint()->GetStepStatus()<<" "<<fGeomBoundary<<" "<<step->GetPreStepPoint()->GetTouchableHandle()->GetReplicaNumber()<<std::endl;
   //debug
   //if(index==81918){
   //std::cout<<index<<" "<<tof<<" Prelocal : "<<step->GetPreStepPoint()->GetLocalTime()<<" Postlocal : "<<step->GetPostStepPoint()->GetLocalTime()<<" global : "<<step->GetPreStepPoint()->GetGlobalTime()<<" ID : "<<step->GetTrack()->GetTrackID()<<" Parent : "<<step->GetTrack()->GetParentID()<<"Event ID : "<<mCurrentEvent<<std::endl;
   //}
   //if(mCurrentEvent==2){ std::cout<<index<<"  "<<tof<<std::endl;}
-  pTime->Fill(tof);
-  mImagetof->AddValueDouble(index, pTime, w * distance * material->GetDensity() / (g / cm3));
+  // Record the input and output time in voxels and generate randomize time value between iût and output time value /** Modif Oreste **/
+  //std::cout<<index<<" "<<mCurrentIndex<<std::endl;
+  if (index != mCurrentIndex) {
+    //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
+    if (mCurrentIndex != -1) {
+      //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
+      outputtof = step->GetPreStepPoint()->GetLocalTime();
+      tof = inputtof + (outputtof-inputtof)*randomNumber; //randomization
+      //std::cout<<mCurrentEvent<<" "<<index<<" "<<mCurrentIndex<<" "<<inputtof<<" "<<outputtof<<" "<<tof<<" "<<inputtof-outputtof<<" "<<randomNumber<<std::endl;
+      pTime->Fill(tof);
+      mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
+    }
+    //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
+    inputtof = step->GetPreStepPoint()->GetLocalTime();
+    //FirstInIndex = true;
+    mCurrentIndex = index;
+  }
+  //Recording of the time for the last index (index = mCurrentIndex) of the event
+  if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
+    outputtof = step->GetPostStepPoint()->GetLocalTime();
+    tof = inputtof + (outputtof-inputtof)*randomNumber;
+    //std::cout<<mCurrentEvent<<" "<<index<<" "<<mCurrentIndex<<" "<<inputtof<<" "<<outputtof<<" "<<tof<<" "<<inputtof-outputtof<<std::endl;
+    pTime->Fill(tof);
+    mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
+  }
+
   pTime->Reset();
 
 }
@@ -374,7 +400,6 @@ void GatePromptGammaTLEActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
   ioh = new GateImageOfHistograms("double");
-  std::cout<< (h->GetXaxis()->GetXmax()-h->GetXaxis()->GetXmin())/h->GetNbinsX()<<std::endl;
   ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   ioh->SetOrigin(mOrigin);
   ioh->SetTransformMatrix(mImage.GetTransformMatrix());

@@ -45,7 +45,6 @@ public:
   ~GateImageOfHistograms();
 
   void SetHistoInfo(int n, double min, double max);
-  void SetHistoInfo(int n, double min, double max, double val);
   virtual void Allocate();
   void Reset();
   void AddValueFloat(const int & index, TH1D * h, const double scale);

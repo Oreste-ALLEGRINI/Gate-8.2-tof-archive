@@ -145,7 +145,7 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   mData->SampleRandomEnergy(mEnergy);
 
   // Time
-  mDataToF->SampleRandomTime(mTime, mData->mCurrentIndex_i, mData->mCurrentIndex_j, mData->mCurrentIndex_k);
+  mDataToF->SampleRandomTime(mTime, mData->returnCurrentIndex_i(), mData->returnCurrentIndex_j(), mData->returnCurrentIndex_k());
   //std::cout<<"Time in SourceOfPromptGamma : "<<mTime<<std::endl;
   //debug
   //if (mTime<1.5) std::cout<<mTime<<" "<<mEnergy<<" "<<particle_position_tof.x()<<" "<<particle_position.x()<<" "<<particle_position_tof.y()<<" "<<particle_position.y()<<" "<<particle_position_tof.z()<<" "<<particle_position.z()<<std::endl;
