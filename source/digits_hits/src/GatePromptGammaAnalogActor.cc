@@ -125,10 +125,7 @@ void GatePromptGammaAnalogActor::SaveData()
   alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void GatePromptGammaAnalogActor::BeginOfEventAction(const G4Event *) {
-  mCurrentIndex = -1;
-}
+
 
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserPostTrackActionInVoxel(const int, const G4Track *)
@@ -157,7 +154,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  randomNumber = G4UniformRand();
+  const G4double &tof = step->GetPreStepPoint()->GetLocalTime();
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -193,26 +190,8 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueInt(index, bin, 1);
 
-      if (index != mCurrentIndex) {
-        //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
-        if (mCurrentIndex != -1) {
-          //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
-          outputtof = step->GetPreStepPoint()->GetLocalTime();
-          tof = inputtof + (outputtof-inputtof)*randomNumber; //randomization
-          pTime->Fill(tof);
-          mImagetof->AddValueDouble(mCurrentIndex, pTime, 1);
-        }
-        //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
-        inputtof = step->GetPreStepPoint()->GetLocalTime();
-        mCurrentIndex = index;
-      }
-      //Recording of the time for the last index (index = mCurrentIndex) of the event
-      if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
-        outputtof = step->GetPostStepPoint()->GetLocalTime();
-        tof = inputtof + (outputtof-inputtof)*randomNumber;
-        pTime->Fill(tof);
-        mImagetof->AddValueDouble(mCurrentIndex, pTime, 1);
-      }
+      pTime->Fill(tof);
+      mImagetof->AddValueDouble(index, pTime, 1);
       pTime->Reset();
 
       /*Some debug stuff for lowE gammas.
