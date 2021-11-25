@@ -154,7 +154,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4double &tof = step->GetPreStepPoint()->GetLocalTime();
+  const G4double &tof = step->GetPostStepPoint()->GetLocalTime(); //Must be PoststepPoint because the PG is generated at the PostStepPoint of the current step
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;

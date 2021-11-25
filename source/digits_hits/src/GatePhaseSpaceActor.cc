@@ -241,7 +241,6 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
   // Set Primary Energy
   bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
   pt = e->GetPrimaryVertex()->GetT0();
-  //std::cout<<"Temps de GetT0 : "<<pt<<std::endl;
   // Set SourceID
   if (GetIsSpotIDEnabled()) {
     GateSourceTPSPencilBeam *tpspencilsource =
@@ -325,7 +324,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   strcpy(pname, st.c_str());
   bPDGCode = step->GetTrack()->GetDefinition()->GetPDGEncoding();
 
-  //cout << step->GetTrack()->GetDefinition()->GetPDGEncoding() << endl;
   // TODO doesnt work, undefined reference. Problem with makefile?
   //Solution, use PDGcode instead of ParticleName. However, GatePhaseSpaceSource uses Particlename char[64] while GatePhaseSpaceActor stores Char_t[256].
 
@@ -507,7 +505,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   if (EnableLocalTime) {
     t = stepPoint->GetLocalTime();
   } else t = stepPoint->GetGlobalTime() ;
-  //std::cout<<tOut<<" + "<<tProd<<" = "<<tOut+tProd<<" = "<<t<<" - "<<tOut+tProd-t<<std::endl;
   //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
   GateDebugMessage("Actor", 4, st
                    << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
