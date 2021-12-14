@@ -50,24 +50,8 @@ protected:
   // The 3D prompt gamma distribution
   GateImageOfHistograms * mImageTof; /** Modif Oreste **/
   std::vector<float> mDataCounts;
-
-  //double * mean = new double[104125];
-  //double * sigma = new double[104125];
-  //std::vector<float> mean ;
-
-  //std::vector<float> sigma;
-
-
-  // Current pixel index for position in 3D space
-  //int mCurrentIndex_i;
-  //int mCurrentIndex_j;
-  //int mCurrentIndex_k;
-
-  // Physical coordinates from index coordinate
-  std::vector<double> mIndexCoordX;
-  std::vector<double> mIndexCoordY;
-  std::vector<double> mIndexCoordZ;
-  std::vector<TH1D*> mTimeGen; /** Modif Oreste **/
+  // The vector of time distribution
+  std::vector<TH1D*> mTimeGen;
 
   G4SPSRandomGenerator mPositionXGenToF;
   std::vector<G4SPSRandomGenerator*> mPositionYGenToF;

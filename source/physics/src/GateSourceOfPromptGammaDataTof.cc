@@ -133,33 +133,7 @@ void GateSourceOfPromptGammaDataTof::InitializeToF()
 
 }
 //------------------------------------------------------------------------
-/*void GateSourceOfPromptGammaDataTof::SampleRandomPositionToF(G4ThreeVector & position)
-{
-  // Random 3D position (in pixel). If size == 1, then bug in GenRand
-  // (infinite loop), so we test and set random value [0:1]
-  double x;
-  if (mImageTof->GetResolution().x() == 1) x=G4UniformRand();
-  else x = mPositionXGenToF.GenRandX();
-  int i =  mCurrentIndex_i = floor(x);
-  double y;
-  if (mImageTof->GetResolution().y() == 1) y=G4UniformRand();
-  else y = mPositionYGenToF[i]->GenRandY();
-  int j = mCurrentIndex_j = floor(y);
-  double z;
-  if (mImageTof->GetResolution().z() == 1) z=G4UniformRand();
-  else  z = mPositionZGenToF[i][j]->GenRandZ();
-  mCurrentIndex_k = floor(z);
 
-  // Offset according to image origin (and half voxel position)
-  x = mImageTof->GetOrigin().x() + x*mImageTof->GetVoxelSize().x();
-  y = mImageTof->GetOrigin().y() + y*mImageTof->GetVoxelSize().y();
-  z = mImageTof->GetOrigin().z() + z*mImageTof->GetVoxelSize().z();
-
-  // Vector
-  position.setX(x);
-  position.setY(y);
-  position.setZ(z);
-}*/
 
 //------------------------------------------------------------------------
 
@@ -167,12 +141,6 @@ void GateSourceOfPromptGammaDataTof::SampleRandomTime(double & time, int i, int 
 {
     // Get time spectrum in the current pixel
     long index = mImageTof->GetIndexFromPixelIndex(i, j, k);
-    //if(index==80273){
-      //std::cout<<mCurrentIndex_i<<" "<<mCurrentIndex_j<<" "<<mCurrentIndex_i<<std::endl;
-      //for(int i=0; i<1000; i++){
-        //std::cout<<mTimeGen.at(index)->GetBinContent(i)<<std::endl;
-      //}
-    //}
     if (mDataCounts[index] != 0) {
       time = mTimeGen[index]->GetRandom();
       if(index==80273){

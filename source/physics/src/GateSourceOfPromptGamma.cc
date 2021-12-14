@@ -30,7 +30,7 @@ GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   pMessenger = new GateSourceOfPromptGammaMessenger(this);
   // Create data object (will be initialized later)
   mData = new GateSourceOfPromptGammaData;
-  mDataToF = new GateSourceOfPromptGammaDataTof;
+  mDataToF = new GateSourceOfPromptGammaDataTof;   /** Modif Oreste **/
   mIsInitializedFlag = false;
   mIsInitializedNumberOfPrimariesFlag = false;
   mFilename = "no filename given";
@@ -75,7 +75,7 @@ void GateSourceOfPromptGamma::Initialize()
   // WILL NOT WORK WITH SEVERAL SOURCES !
   SetSourceWeight(mData->ComputeSum());
   /** Modif Oreste **/
-  // Get and load file contianing the pTime data
+  // Get and load file containing the pTime data
   mDataToF->LoadDataToF(mFilename);
   mDataToF->InitializeToF();
 
@@ -131,20 +131,16 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4ThreeVector particle_position;
   mData->SampleRandomPosition(particle_position);
 
-  //G4ThreeVector particle_position_tof;
-  //mDataToF->SampleRandomPositionToF(particle_position_tof);
-
   // The position coordinate is expressed in the coordinate system
   // (CS) of the volume it was attached to during the TLEActor
   // simulation. Now we convert the coordinates into world
   // coordinates.
   ChangeParticlePositionRelativeToAttachedVolume(particle_position);
-  //ChangeParticlePositionRelativeToAttachedVolume(particle_position_tof);
 
   // Energy
   mData->SampleRandomEnergy(mEnergy);
 
-  // Time
+  // Time /** Modif Oreste **/
   mDataToF->SampleRandomTime(mTime, mData->returnCurrentIndex_i(), mData->returnCurrentIndex_j(), mData->returnCurrentIndex_k());
 
   // Direction
@@ -166,10 +162,10 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
   G4PrimaryParticle* particle =
     new G4PrimaryParticle(G4Gamma::Gamma(), px, py, pz);
   G4PrimaryVertex* vertex;
-  vertex = new G4PrimaryVertex(particle_position, mTime);
+  vertex = new G4PrimaryVertex(particle_position, mTime); /** Modif Oreste **/
   vertex->SetWeight(1.0); // FIXME
   vertex->SetPrimary(particle);
-  vertex->SetT0(mTime);
+  vertex->SetT0(mTime); /** Modif Oreste **/
   aEvent->AddPrimaryVertex(vertex);
 }
 //------------------------------------------------------------------------

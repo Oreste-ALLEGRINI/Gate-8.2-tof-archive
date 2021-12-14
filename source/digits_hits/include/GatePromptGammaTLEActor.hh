@@ -52,7 +52,6 @@ protected:
   std::string mInputDataFilename;
   GatePromptGammaData data;
   bool alreadyHere;
-  bool FirstInIndex;
 
   bool mIsDebugOutputEnabled;
   bool mIsOutputMatchEnabled;
@@ -81,10 +80,9 @@ protected:
 
   GateImageInt mLastHitEventImage;      //store eventID when last updated.
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
-  int mCurrentIndex;                    //monitor the input and output of the particule in a voxel
-  double inputtof, outputtof, tof;
-  G4double randomNumber;
-  G4PrimaryParticle * primary_time;
+  int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
+  double inputtof, outputtof, tof;      /** Modif Oreste **/
+  G4double randomNumber;                /** Modif Oreste **/
 
   TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/
 };

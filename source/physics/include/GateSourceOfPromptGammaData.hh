@@ -38,7 +38,6 @@ public:
   GateSourceOfPromptGammaData();
   ~GateSourceOfPromptGammaData();
 
-  //void SampleRandomPositionTime(G4ThreeVector & position, G4double & tof);
   void SampleRandomPosition(G4ThreeVector & position);
   void SampleRandomEnergy(double & energy);
   void SampleRandomDirection(G4ParticleMomentum & direction);
@@ -48,7 +47,6 @@ public:
 
   void LoadData(std::string mFilename);
   void Initialize();
-  //void InitializeToF(); /** Modif Oreste **/
   double computesum;
   double ComputeSum() { return computesum; }
 
@@ -61,12 +59,6 @@ protected:
   int mCurrentIndex_i;
   int mCurrentIndex_j;
   int mCurrentIndex_k;
-
-  //double * mean = new double[104125];
-  //double * sigma = new double[104125];
-  //std::vector<float> mean ;
-
-  //std::vector<float> sigma;
 
   // Physical coordinates from index coordinate
   std::vector<double> mIndexCoordX;

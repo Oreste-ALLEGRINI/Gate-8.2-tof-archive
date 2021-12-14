@@ -47,10 +47,10 @@ protected:
   bool mIsInitializedFlag;
   bool mIsInitializedNumberOfPrimariesFlag;
   GateSourceOfPromptGammaData * mData;
-  GateSourceOfPromptGammaDataTof * mDataToF;
+  GateSourceOfPromptGammaDataTof * mDataToF; /** Modif Oreste **/
   G4String mFilename;
   double mEnergy; // because particle_energy is private (FIXME will be changed)
-  double mTime;
+  double mTime; /** Modif Oreste **/
 
 
 

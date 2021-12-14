@@ -228,40 +228,33 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Do not scale h directly because it will be reused
   mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
   // (material is converted from internal units to g/cm3)
+
+  //----------------------------------------------------------------------------------------------------------
   /** Modif Oreste **/
-  //std::cout<<index<<" "<<step->GetPreStepPoint()->GetStepStatus()<<" "<<fGeomBoundary<<" "<<step->GetPreStepPoint()->GetTouchableHandle()->GetReplicaNumber()<<std::endl;
-  //debug
-  //if(index==81918){
-  //std::cout<<index<<" "<<tof<<" Prelocal : "<<step->GetPreStepPoint()->GetLocalTime()<<" Postlocal : "<<step->GetPostStepPoint()->GetLocalTime()<<" global : "<<step->GetPreStepPoint()->GetGlobalTime()<<" ID : "<<step->GetTrack()->GetTrackID()<<" Parent : "<<step->GetTrack()->GetParentID()<<"Event ID : "<<mCurrentEvent<<std::endl;
-  //}
-  //if(mCurrentEvent==2){ std::cout<<index<<"  "<<tof<<std::endl;}
-  // Record the input and output time in voxels and generate randomize time value between iût and output time value /** Modif Oreste **/
-  //std::cout<<index<<" "<<mCurrentIndex<<std::endl;
+  // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
   if (index != mCurrentIndex) {
     //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
     if (mCurrentIndex != -1) {
       //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
       outputtof = step->GetPreStepPoint()->GetLocalTime();
       tof = inputtof + (outputtof-inputtof)*randomNumber; //randomization
-      //std::cout<<mCurrentEvent<<" "<<index<<" "<<mCurrentIndex<<" "<<inputtof<<" "<<outputtof<<" "<<tof<<" "<<inputtof-outputtof<<" "<<randomNumber<<std::endl;
       pTime->Fill(tof);
       mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
     }
     //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
     inputtof = step->GetPreStepPoint()->GetLocalTime();
-    //FirstInIndex = true;
     mCurrentIndex = index;
   }
   //Recording of the time for the last index (index = mCurrentIndex) of the event
   if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
     outputtof = step->GetPostStepPoint()->GetLocalTime();
     tof = inputtof + (outputtof-inputtof)*randomNumber;
-    //std::cout<<mCurrentEvent<<" "<<index<<" "<<mCurrentIndex<<" "<<inputtof<<" "<<outputtof<<" "<<tof<<" "<<inputtof-outputtof<<std::endl;
     pTime->Fill(tof);
     mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
   }
 
   pTime->Reset();
+  //------------------------------------------------------------------------------------------------------------
 
 }
 //-----------------------------------------------------------------------------
@@ -398,6 +391,7 @@ void GatePromptGammaTLEActor::SetTLEIoH(GateImageOfHistograms*& ioh) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+/** Modif Oreste **/
 void GatePromptGammaTLEActor::SetTofIoH(GateImageOfHistograms*& ioh, TH1D* h) {
   ioh = new GateImageOfHistograms("double");
   ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
