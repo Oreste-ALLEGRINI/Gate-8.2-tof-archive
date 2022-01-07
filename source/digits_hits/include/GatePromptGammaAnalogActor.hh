@@ -31,6 +31,7 @@ public:
   virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
+  virtual void BeginOfEventAction(const G4Event * e);/** Modif Oreste **/
 
   void SetInputDataFilename(std::string filename);
   virtual void SaveData();
@@ -51,6 +52,7 @@ protected:
 
   GateImageOfHistograms * mImageGamma;  //main output (yield)
   GateImageOfHistograms * mImagetof; /** Modif Oreste **/
+  double startEvtTime;                  /** Modif Oreste **/
   TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/ //the source can be placed up to around 2.5 m upstream the target => Can be increased or decreased by modifying the TH size
 
 };

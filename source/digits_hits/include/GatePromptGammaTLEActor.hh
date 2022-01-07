@@ -82,6 +82,7 @@ protected:
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
   int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
   double inputtof, outputtof, tof;      /** Modif Oreste **/
+  double startEvtTime;                  /** Modif Oreste **/
   G4double randomNumber;                /** Modif Oreste **/
 
   TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/

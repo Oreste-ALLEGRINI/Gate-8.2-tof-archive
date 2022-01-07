@@ -27,7 +27,7 @@ GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int dept
   pMessenger = new GatePromptGammaAnalogActorMessenger(this);
   //SetStepHitType("random");
   mImageGamma = new GateImageOfHistograms("int");
-  mImagetof = new GateImageOfHistograms("double");
+  mImagetof = new GateImageOfHistograms("double"); /** Modif Oreste **/
   mSetOutputCount = false;
   alreadyHere = false;
 }
@@ -57,7 +57,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Enable callbacks
   EnableBeginOfRunAction(false);
-  EnableBeginOfEventAction(false);
+  EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
@@ -125,7 +125,13 @@ void GatePromptGammaAnalogActor::SaveData()
   alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
+void GatePromptGammaAnalogActor::BeginOfEventAction(const G4Event *e) {  /** Modif Oreste **/
+  //std::cout << "Event Begin. Press any key to continue." << std::endl;
+  //std::cin.get();
+  GateVActor::BeginOfEventAction(e);
+  startEvtTime = e->GetPrimaryVertex()->GetT0();
 
+}
 
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserPostTrackActionInVoxel(const int, const G4Track *)
@@ -154,7 +160,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4double &tof = step->GetPostStepPoint()->GetLocalTime(); //Must be PoststepPoint because the PG is generated at the PostStepPoint of the current step
+  const G4double &tof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime; //Must be PoststepPoint because the PG is generated at the PostStepPoint of the current step
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -168,7 +174,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   }
 
   // Check if proton is secondary emission (Issue in retrieving GetGlobalTime ==> Need to be solved)
-  if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
+  //if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
 
   // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
