@@ -172,7 +172,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double &distance = step->GetStepLength();
-  randomNumber = G4UniformRand();
+  randomNumberTime = G4UniformRand();
+  randomNumberEnergy = G4UniformRand();
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -218,17 +219,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(index)));
     material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
   }
-
-  // Get value from histogram. We do not check the material index, and
-  // assume everything exist (has been computed by InitializeMaterial)
-  TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
-
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
-
-  // Do not scale h directly because it will be reused
-  mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
-  // (material is converted from internal units to g/cm3)
 
   //----------------------------------------------------------------------------------------------------------
   /** Modif Oreste **/
@@ -238,20 +230,39 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     if (mCurrentIndex != -1) {
       //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
       outputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
-      tof = inputtof + (outputtof-inputtof)*randomNumber; //randomization
+      energy_out = step->GetPreStepPoint()->GetKineticEnergy();
+      tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
+      particle_energy_rand = energy_in + (energy_out-energy_in)*randomNumberEnergy;
       pTime->Fill(tof);
       mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
+      // Get value from histogram. We do not check the material index, and
+        // assume everything exist (has been computed by InitializeMaterial)
+        TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy_rand);
+
+        // Do not scale h directly because it will be reused
+        mImageGamma->AddValueDouble(mCurrentIndex, h, w * distance * material->GetDensity() / (g / cm3));
+        // (material is converted from internal units to g/cm3)
     }
     //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
     inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+    energy_in = step->GetPreStepPoint()->GetKineticEnergy();
     mCurrentIndex = index;
   }
   //Recording of the time for the last index (index = mCurrentIndex) of the event
   if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
     outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
-    tof = inputtof + (outputtof-inputtof)*randomNumber;
+    tof = inputtof + (outputtof-inputtof)*randomNumberTime;
+    energy_out = step->GetPostStepPoint()->GetKineticEnergy();
+    particle_energy_rand = energy_in + (energy_out-energy_in)*randomNumberEnergy;
     pTime->Fill(tof);
     mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
+
+    // assume everything exist (has been computed by InitializeMaterial)
+    TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy_rand);
+
+    // Do not scale h directly because it will be reused
+    mImageGamma->AddValueDouble(mCurrentIndex, h, w * distance * material->GetDensity() / (g / cm3));
+    // (material is converted from internal units to g/cm3)
   }
 
   pTime->Reset();

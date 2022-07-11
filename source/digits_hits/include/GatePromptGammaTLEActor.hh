@@ -83,7 +83,9 @@ protected:
   int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
   double inputtof, outputtof, tof;      /** Modif Oreste **/
   double startEvtTime;                  /** Modif Oreste **/
-  G4double randomNumber;                /** Modif Oreste **/
+  double energy_in, energy_out, particle_energy_rand;    /** Modif Oreste **/
+  G4double randomNumberTime;                /** Modif Oreste **/
+  G4double randomNumberEnergy;               /** Modif Oreste **/
 
   TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/
 };
