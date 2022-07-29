@@ -82,14 +82,10 @@ protected:
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
   int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
   double inputtof, outputtof, tof;      /** Modif Oreste **/
-<<<<<<< HEAD
   double startEvtTime;                  /** Modif Oreste **/
   double particle_energy_rand;          /** Modif Oreste **/
   G4double randomNumberTime;                /** Modif Oreste **/
   G4double randomNumberEnergy;               /** Modif Oreste **/
-=======
-  G4double randomNumber;                /** Modif Oreste **/
->>>>>>> parent of cdb0fd8... Correction of GetGlobalTime() bug. Each event is actually sent every 1 ms. This time is cumulated as the start time value of the event and can be recovered in the G4Event->GetPrimaryVertex->GetT0()
 
   TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/
 };

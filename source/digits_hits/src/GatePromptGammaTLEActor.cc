@@ -239,13 +239,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
     if (mCurrentIndex != -1) {
       //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
-<<<<<<< HEAD
       outputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
       tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
-=======
-      outputtof = step->GetPreStepPoint()->GetLocalTime();
-      tof = inputtof + (outputtof-inputtof)*randomNumber; //randomization
->>>>>>> parent of cdb0fd8... Correction of GetGlobalTime() bug. Each event is actually sent every 1 ms. This time is cumulated as the start time value of the event and can be recovered in the G4Event->GetPrimaryVertex->GetT0()
       pTime->Fill(tof);
       mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
 
@@ -256,13 +251,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   }
   //Recording of the time for the last index (index = mCurrentIndex) of the event
   if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
-<<<<<<< HEAD
     outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
     tof = inputtof + (outputtof-inputtof)*randomNumberTime;
-=======
-    outputtof = step->GetPostStepPoint()->GetLocalTime();
-    tof = inputtof + (outputtof-inputtof)*randomNumber;
->>>>>>> parent of cdb0fd8... Correction of GetGlobalTime() bug. Each event is actually sent every 1 ms. This time is cumulated as the start time value of the event and can be recovered in the G4Event->GetPrimaryVertex->GetT0()
     pTime->Fill(tof);
     mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
   }

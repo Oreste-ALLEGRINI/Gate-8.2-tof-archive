@@ -28,6 +28,7 @@ public:
   FCT_FOR_AUTO_CREATOR_ACTOR(GatePromptGammaAnalogActor)
 
   virtual void Construct();
+  virtual void BeginOfEventAction(const G4Event* e);
   virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
@@ -51,6 +52,11 @@ protected:
 
   GateImageOfHistograms * mImageGamma;  //main output (yield)
   GateImageOfHistograms * mImagetof; /** Modif Oreste **/
+  int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
+  int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
+  double inputtof, outputtof, tof;      /** Modif Oreste **/
+  double startEvtTime;                  /** Modif Oreste **/
+  G4double randomNumberTime;                /** Modif Oreste **/
   TH1D * pTime = new TH1D("","",1000,0,5); /** Modif Oreste **/ //the source can be placed up to around 2.5 m upstream the target => Can be increased or decreased by modifying the TH size
 
 };

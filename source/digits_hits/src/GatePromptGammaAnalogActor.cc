@@ -125,7 +125,18 @@ void GatePromptGammaAnalogActor::SaveData()
   alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
-
+//-----------------------------------------------------------------------------
+// Callback at start of each event
+void GatePromptGammaAnalogActor::BeginOfEventAction(const G4Event *e) {
+  //std::cout << "Event Begin. Press any key to continue." << std::endl;
+  //std::cin.get();
+  GateVActor::BeginOfEventAction(e);
+  mCurrentIndex = -1;
+  mCurrentEvent++;
+  startEvtTime = e->GetPrimaryVertex()->GetT0();
+  GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: " << mCurrentEvent << G4endl);
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserPostTrackActionInVoxel(const int, const G4Track *)
@@ -154,7 +165,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
   const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4double &tof = step->GetPostStepPoint()->GetLocalTime(); //Must be PoststepPoint because the PG is generated at the PostStepPoint of the current step
+  randomNumberTime = G4UniformRand();
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -190,9 +201,29 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueInt(index, bin, 1);
 
-      pTime->Fill(tof);
-      mImagetof->AddValueDouble(index, pTime, 1);
-      pTime->Reset();
+      /** Modif Oreste **/
+      // Record the input and output time in voxels and generate randomize time value between input and output time value /** Modif Oreste **/
+      if (index != mCurrentIndex) {
+        //Here we record the time in the image of the previous voxel (mCurrentIndex) before to change the input time of the current voxel (index)
+        if (mCurrentIndex != -1) {
+          //PreStepPoint of the current step after a change of index corresponds to the PostStepPoint of the last step in the previous index
+          outputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+          tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
+          pTime->Fill(tof);
+          mImagetof->AddValueDouble(mCurrentIndex, pTime, 1);
+
+        }
+        //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
+        inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
+        mCurrentIndex = index;
+      }
+      //Recording of the time for the last index (index = mCurrentIndex) of the event
+      if (inputtof == outputtof && step->GetPostStepPoint()->GetVelocity()==0){
+        outputtof = step->GetPostStepPoint()->GetGlobalTime() - startEvtTime;
+        tof = inputtof + (outputtof-inputtof)*randomNumberTime;
+        pTime->Fill(tof);
+        mImagetof->AddValueDouble(mCurrentIndex, pTime, 1);
+      }
 
       /*Some debug stuff for lowE gammas.
       GateMessage("Actor",4,"PGAn "<<"PG added."<<std::endl);
@@ -205,6 +236,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       const G4Isotope* target = hproc->GetTargetIsotope();
       hproc->DumpPhysicsTable();
       */
+      pTime->Reset();
     }
   }
 }
