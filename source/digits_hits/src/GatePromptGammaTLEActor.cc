@@ -223,7 +223,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
 
   // Get value from histogram. We do not check the material index, and
     // assume everything exist (has been computed by InitializeMaterial)
-    TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy_rand);
+    TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy_in);
 
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
