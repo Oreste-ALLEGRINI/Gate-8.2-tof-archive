@@ -170,11 +170,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Get information
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   const G4double &particle_energy_in = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4double &particle_energy_out = step->GetPreStepPoint()->GetKineticEnergy();
+  const G4double &particle_energy_out = step->GetPostStepPoint()->GetKineticEnergy();
   const G4double &distance = step->GetStepLength();
   randomNumberTime = G4UniformRand();
   randomNumberEnergy = G4UniformRand();
-  particle_energy_rand = particle_energy_in + (particle_energy_out-particle_energy_in)*randomNumberEnergy;
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -185,7 +184,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   }
 
   // Check if proton is secondary emission (Issue in retrieving GetGlobalTime ==> Need to be solved)
-  if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
+  //if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
 
   // Post computation TLE + TLE systematic + random variance (for the uncorrelated case, which is wrong).
   if (mIsDebugOutputEnabled) {
@@ -222,14 +221,15 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   }
 
   // Get value from histogram. We do not check the material index, and
-    // assume everything exist (has been computed by InitializeMaterial)
-    TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy_in);
+  // assume everything exist (has been computed by InitializeMaterial)
+  particle_energy_rand = particle_energy_in + (particle_energy_out-particle_energy_in)*randomNumberEnergy;
+  TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy_in);
 
   // Also take the particle weight into account
   double w = step->GetTrack()->GetWeight();
 
   // Do not scale h directly because it will be reused
-  mImageGamma->AddValueDouble(mCurrentIndex, h, w * distance * material->GetDensity() / (g / cm3));
+  mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
   // (material is converted from internal units to g/cm3)
 
   //----------------------------------------------------------------------------------------------------------
@@ -243,10 +243,9 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
       tof = inputtof + (outputtof-inputtof)*randomNumberTime; //randomization
       pTime->Fill(tof);
       mImagetof->AddValueDouble(mCurrentIndex, pTime, w * distance * material->GetDensity() / (g / cm3));
-
     }
     //Here we update the input time in voxel "index" which will be attributed to mCurrentIndex after "index" changing
-    inputtof = step->GetPreStepPoint()->GetLocalTime();
+    inputtof = step->GetPreStepPoint()->GetGlobalTime() - startEvtTime;
     mCurrentIndex = index;
   }
   //Recording of the time for the last index (index = mCurrentIndex) of the event

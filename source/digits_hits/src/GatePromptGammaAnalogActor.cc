@@ -179,7 +179,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   }
 
   // Check if proton is secondary emission (Issue in retrieving GetGlobalTime ==> Need to be solved)
-  if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
+  //if (step->GetTrack()->GetParentID() != 0) return; /** Modif Oreste **/
 
   // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
