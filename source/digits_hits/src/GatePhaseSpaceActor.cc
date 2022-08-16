@@ -52,7 +52,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableProdVol = true;
   EnableProdProcess = true;
   EnableWeight = true;
-  EnableTime = false;
+  EnableTime = true;
   EnableIonTime = true;
   EnableLocalTime = false;
   EnableMass = true;

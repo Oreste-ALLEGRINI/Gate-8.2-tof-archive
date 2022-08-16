@@ -141,6 +141,7 @@ void GatePromptGammaTLEActor::BeginOfEventAction(const G4Event *e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentIndex = -1;
   mCurrentEvent++;
+  startEvtTime = e->GetPrimaryVertex()->GetT0();
   GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: " << mCurrentEvent << G4endl);
 }
 //-----------------------------------------------------------------------------
