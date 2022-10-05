@@ -81,7 +81,7 @@ protected:
   GateImageInt mLastHitEventImage;      //store eventID when last updated.
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
   int mCurrentIndex;                    //monitor the input and output of the particule in a voxel /** Modif Oreste **/
-  double inputtof, outputtof, tof;      /** Modif Oreste **/
+  double tof;      /** Modif Oreste **/
   double startEvtTime;                  /** Modif Oreste **/
   double particle_energy_rand;          /** Modif Oreste **/
   G4double randomNumberTime;                /** Modif Oreste **/
